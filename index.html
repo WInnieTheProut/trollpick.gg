@@ -1717,6 +1717,29 @@ function waitForFirebase(cb) {
   else window.addEventListener('firebaseReady', cb, { once: true });
 }
 
+// Nettoyage automatique des lobbies de plus de 3h
+async function cleanOldLobbies() {
+  waitForFirebase(async () => {
+    db = window._db; fbRef = window._fbRef;
+    fbGet = window._fbGet; fbRemove = window._fbRemove;
+    try {
+      const snap = await fbGet(fbRef(db, 'lobbies'));
+      if (!snap.exists()) return;
+      const now = Date.now();
+      const THREE_HOURS = 3 * 60 * 60 * 1000;
+      snap.forEach(child => {
+        const data = child.val();
+        if (data.createdAt && (now - data.createdAt) > THREE_HOURS) {
+          fbRemove(fbRef(db, `lobbies/${child.key}`));
+        }
+      });
+    } catch(e) {}
+  });
+}
+
+// Lancer le nettoyage au démarrage
+cleanOldLobbies();
+
 function generateCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
