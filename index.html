@@ -930,14 +930,14 @@ window.dispatchEvent(new Event('firebaseReady'));
     <div class="lobby-card" style="min-width:260px;">
       <div class="lobby-card-title">Mode solo</div>
       <p style="font-size:0.8rem;color:rgba(240,230,211,.5);text-align:center;margin-bottom:4px;">Joue seul avec toutes les roues</p>
-      <button class="lobby-btn" onclick="startSolo()">⚡ Jouer en solo</button>
+      <button class="lobby-btn" onclick="startSolo()">Jouer en solo</button>
     </div>
 
     <!-- Créer -->
     <div class="lobby-card" style="min-width:260px;">
       <div class="lobby-card-title">Créer une partie</div>
       <input class="lobby-input" id="createNameInput" placeholder="Ton pseudo..." maxlength="20">
-      <button class="lobby-btn" id="createBtn" onclick="createLobby()">🎲 Créer le lobby</button>
+      <button class="lobby-btn" id="createBtn" onclick="createLobby()">Créer le lobby</button>
       <div class="lobby-error" id="createError" style="display:none;"></div>
     </div>
 
@@ -946,7 +946,7 @@ window.dispatchEvent(new Event('firebaseReady'));
       <div class="lobby-card-title">Rejoindre une partie</div>
       <input class="lobby-input" id="joinNameInput" placeholder="Ton pseudo..." maxlength="20">
       <input class="lobby-input" id="joinCodeInput" placeholder="Code de la partie..." maxlength="4" style="letter-spacing:.4em;font-size:1.2rem;">
-      <button class="lobby-btn" id="joinBtn" onclick="joinLobby()">🔗 Rejoindre</button>
+      <button class="lobby-btn" id="joinBtn" onclick="joinLobby()">Rejoindre</button>
       <div class="lobby-error" id="joinError" style="display:none;"></div>
     </div>
 
@@ -965,7 +965,7 @@ window.dispatchEvent(new Event('firebaseReady'));
   </div>
 
   <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-    <button class="lobby-btn" id="startGameBtn" onclick="startGame()" style="min-width:180px;">⚡ Lancer la partie</button>
+    <button class="lobby-btn" id="startGameBtn" onclick="startGame()" style="min-width:180px;">Lancer la partie</button>
     <button class="lobby-btn secondary" onclick="leaveLobby()" style="min-width:140px;">← Quitter</button>
   </div>
   <div class="lobby-error" id="waitError" style="display:none;"></div>
@@ -1069,7 +1069,7 @@ window.dispatchEvent(new Event('firebaseReady'));
         <div class="pointer"></div>
         <div class="hub"></div>
       </div>
-      <button class="spin-btn" id="spinRoleBtn" onclick="spinRole()">⚡ Lancer</button>
+      <button class="spin-btn" id="spinRoleBtn" onclick="spinRole()">Lancer</button>
     </div>
 
     <!-- Roue Champions -->
@@ -1090,7 +1090,7 @@ window.dispatchEvent(new Event('firebaseReady'));
         <button class="autofill-role-btn support" onclick="selectChampRole('SUPPORT')">🛡 SUPPORT</button>
       </div>
       <div id="champControls" style="display:none;flex-direction:column;align-items:center;gap:8px;width:100%;">
-        <button class="spin-btn" id="spinChampBtn" onclick="spinChamp()" disabled>⚡ Lancer le champion</button>
+        <button class="spin-btn" id="spinChampBtn" onclick="spinChamp()" disabled>Lancer le champion</button>
         <button class="restart-btn" style="display:inline-block;font-size:0.7rem;padding:6px 20px;" onclick="openRoleSelector()">⇄ Changer de rôle</button>
       </div>
     </div>
