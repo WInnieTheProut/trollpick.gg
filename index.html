@@ -1035,7 +1035,7 @@ window.dispatchEvent(new Event('firebaseReady'));
   </div>
 
   <header>
-    <h1>⚔ Trollpick.GG ⚔</h1>
+    <h1 onclick="returnToHome()" style="cursor:pointer;" title="Retour à l'accueil">⚔ Trollpick.GG ⚔</h1>
     <div class="subtitle">Tourne la roue et carry la game 🔥</div>
     <div class="divider"></div>
   </header>
@@ -1986,6 +1986,16 @@ function leaveLobby() {
     });
   }
   myLobbyCode = null; myPlayerId = null; isHost = false;
+  document.getElementById('waitingScreen').style.display = 'none';
+  document.getElementById('lobbyScreen').style.display = 'flex';
+}
+
+function returnToHome() {
+  if (!confirm('Retourner à l\'accueil ? La partie en cours sera perdue.')) return;
+  if (myLobbyCode && myPlayerId) leaveLobby();
+  restartApp();
+  isSolo = false;
+  document.getElementById('scoreboard').style.display = 'none';
   document.getElementById('waitingScreen').style.display = 'none';
   document.getElementById('lobbyScreen').style.display = 'flex';
 }
