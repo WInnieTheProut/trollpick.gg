@@ -965,7 +965,7 @@ window.dispatchEvent(new Event('firebaseReady'));
   <div style="font-size:.75rem;color:rgba(200,170,110,.5);letter-spacing:.2em;">Partage ce code à tes amis</div>
 
   <div class="lobby-card" style="width:100%;max-width:380px;">
-    <div class="lobby-card-title">Joueurs connectés (<span id="playerCount">1</span>/10)</div>
+    <div class="lobby-card-title">Joueurs connectés (<span id="playerCount">1</span>/5)</div>
     <div class="players-list" id="playersList"></div>
   </div>
 
@@ -1120,7 +1120,7 @@ window.dispatchEvent(new Event('firebaseReady'));
     </div>
   </div>
 
-  <button class="restart-btn" id="restartBtn" onclick="restartApp()">↺ Recommencer</button>
+  <button class="restart-btn" id="restartBtn" onclick="handleRestart()">↺ Recommencer</button>
 
   <footer>League of Legends Fan App · Non officiel</footer>
 </div>
@@ -1517,7 +1517,10 @@ function unlockChampSection() {
   sc.style.pointerEvents = 'all';
   document.getElementById('champRoleSelector').style.display = 'flex';
   document.getElementById('champControls').style.display = 'none';
-  document.getElementById('restartBtn').style.display = 'inline-block';
+  // En solo ou hôte du lobby : afficher le bouton recommencer
+  if (isSolo || isHost) {
+    document.getElementById('restartBtn').style.display = 'inline-block';
+  }
 }
 
 function openRoleSelector() {
@@ -1601,6 +1604,28 @@ function restartApp() {
 
   drawRoleWheel(roleAngle);
   drawChampWheel(champAngle);
+}
+
+async function handleRestart() {
+  if (!isSolo && myLobbyCode) {
+    // Multijoueur : l'hôte envoie le signal de restart à tous via Firebase
+    if (!confirm('Recommencer la partie pour tout le monde ?')) return;
+    // Reset les données de chaque joueur dans Firebase
+    const snap = await fbGet(fbRef(db, `lobbies/${myLobbyCode}/players`));
+    if (!snap.exists()) return;
+    const updates = {};
+    snap.forEach(child => {
+      updates[`lobbies/${myLobbyCode}/players/${child.key}/role1`] = null;
+      updates[`lobbies/${myLobbyCode}/players/${child.key}/role2`] = null;
+      updates[`lobbies/${myLobbyCode}/players/${child.key}/champion`] = null;
+      updates[`lobbies/${myLobbyCode}/players/${child.key}/status`] = 'waiting';
+    });
+    updates[`lobbies/${myLobbyCode}/restart`] = Date.now();
+    await fbUpdate(fbRef(db, '/'), updates);
+  } else {
+    // Solo
+    restartApp();
+  }
 }
 
 // ─── EDITOR ──────────────────────────────────────────────────────────────────
@@ -1825,8 +1850,8 @@ async function joinLobby() {
     }
 
     const playerCount = Object.keys(lobbyData.players || {}).length;
-    if (playerCount >= 10) {
-      errEl.textContent = 'Lobby plein (10/10).'; errEl.style.display = 'block';
+    if (playerCount >= 5) {
+      errEl.textContent = 'Lobby plein (5/5).'; errEl.style.display = 'block';
       document.getElementById('joinBtn').disabled = false; return;
     }
 
@@ -1929,6 +1954,14 @@ function listenScoreboard() {
   fbOnValue(fbRef(db, `lobbies/${myLobbyCode}/players`), (snap) => {
     if (!snap.exists()) return;
     renderScoreboard(snap.val());
+  });
+
+  // Écouter le signal de restart envoyé par l'hôte
+  fbOnValue(fbRef(db, `lobbies/${myLobbyCode}/restart`), (snap) => {
+    if (!snap.exists()) return;
+    restartApp();
+    // L'hôte voit le bouton recommencer après reset
+    if (isHost) document.getElementById('restartBtn').style.display = 'none';
   });
 }
 
