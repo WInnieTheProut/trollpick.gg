@@ -4,11 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trollpick.GG</title>
+<meta name="description" content="Trollpick.GG — Tourne la roue et choisis ton rôle et ton champion pour ta prochaine partie de League of Legends. Mode solo ou multijoueur jusqu'à 5 invocateurs.">
+<meta name="theme-color" content="#010A13">
+
+<!-- Open Graph (aperçu Discord / réseaux sociaux) -->
+<meta property="og:title" content="Trollpick.GG">
+<meta property="og:description" content="Tourne la roue et choisis ton rôle et ton champion pour ta prochaine partie de League of Legends.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="android-chrome-512x512.png">
+
+<!-- Favicons -->
 <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
+<script src="champions.js"></script>
 <script type="module">
 // ─── FIREBASE ────────────────────────────────────────────────────────────────
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -516,11 +527,14 @@ window.dispatchEvent(new Event('firebaseReady'));
   }
 
   footer {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     color: rgba(200, 170, 110, 0.3);
-    letter-spacing: 0.2em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    padding: 10px 0 20px;
+    padding: 10px 20px 20px;
+    text-align: center;
+    max-width: 700px;
+    line-height: 1.8;
   }
 
   /* ── Autofill modal ───────────────────────────────────────────────── */
@@ -977,54 +991,6 @@ window.dispatchEvent(new Event('firebaseReady'));
 </div>
 
 
-<div id="passwordScreen" style="
-  position:fixed;inset:0;z-index:9999;
-  background:#010A13;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:20px;font-family:'Cinzel',serif;
-">
-  <div style="font-size:clamp(1.2rem,3vw,2rem);font-weight:900;letter-spacing:0.2em;text-transform:uppercase;background:linear-gradient(180deg,#F0E6D3,#C8AA6E);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">
-    ⚔ Trollpick.GG ⚔
-  </div>
-  <div style="font-size:0.75rem;letter-spacing:0.35em;color:#0AC8B9;text-transform:uppercase;">Accès restreint</div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px;">
-    <input id="passwordInput" type="password" placeholder="Mot de passe..." onkeydown="if(event.key==='Enter')checkPassword()" style="
-      padding:10px 18px;width:240px;
-      background:rgba(0,0,0,0.5);
-      border:1px solid #785A28;
-      color:#F0E6D3;
-      font-family:'Rajdhani',sans-serif;font-size:1rem;
-      outline:none;text-align:center;
-      clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
-    ">
-    <button onclick="checkPassword()" style="
-      padding:10px 32px;
-      font-family:'Cinzel',serif;font-size:0.8rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;
-      color:#010A13;
-      background:linear-gradient(135deg,#F0E6D3,#C8AA6E);
-      border:none;cursor:pointer;
-      clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
-    ">Entrer</button>
-    <div id="passwordError" style="color:#C62727;font-size:0.75rem;letter-spacing:0.2em;display:none;">Mot de passe incorrect</div>
-  </div>
-</div>
-
-<script>
-  // ── MOT DE PASSE ── Change la valeur ci-dessous
-  const APP_PASSWORD = 'flexgang';
-
-  function checkPassword() {
-    const input = document.getElementById('passwordInput').value;
-    if (input === APP_PASSWORD) {
-      document.getElementById('passwordScreen').style.display = 'none';
-      // lobbyScreen already visible by default
-    } else {
-      document.getElementById('passwordError').style.display = 'block';
-      document.getElementById('passwordInput').value = '';
-      document.getElementById('passwordInput').focus();
-    }
-  }
-</script>
 
 <div class="wrapper">
 
@@ -1122,7 +1088,9 @@ window.dispatchEvent(new Event('firebaseReady'));
 
   <button class="restart-btn" id="restartBtn" onclick="handleRestart()">↺ Recommencer</button>
 
-  <footer>League of Legends Fan App · Non officiel</footer>
+  <footer>
+    Trollpick.GG n'est pas affilié à Riot Games · League of Legends est une marque déposée de Riot Games, Inc. · <a href="https://www.riotgames.com/en/legal" target="_blank" style="color:rgba(200,170,110,0.4);text-decoration:none;">Mentions légales Riot</a>
+  </footer>
 </div>
 
 <div class="particles" id="particles"></div>
@@ -1140,7 +1108,7 @@ async function fetchLatestDDVersion() {
     DD_VERSION = versions[0];
     DD_BASE = `${DD_BASE_URL}/cdn/${DD_VERSION}/img/champion/`;
   } catch(e) {
-    console.warn('Impossible de récupérer la version Data Dragon, utilisation du fallback.');
+    // Fallback silencieux sur la version par défaut
   }
 }
 const imgCache = {}; // champName -> HTMLImageElement
@@ -1211,13 +1179,7 @@ const ROLE_COLORS = [
   ['#2A1F15','#5A4530'],
 ];
 
-const DEFAULT_CHAMPIONS = {
-  TOP:     ['Aatrox','Ahri','Akali','Akshan','Ambessa','Anivia','Aurelion Sol','Aurora','Azir','Bel\'Veth','Brand','Briar','Camille','Cassiopeia','Cho\'Gath','Darius','Diana','Dr.Mundo','Ekko','Elise','Fiddlesticks','Fiora','Fizz','Galio','Gangplank','Garen','Gnar','Gragas','Graves','Gwen','Heimerdinger','Hwei','Illaoi','Irelia','Ivern','Jax','Jayce','K\'Sante','Kalista','Karma','Kayle','Kayn','Kennen','Kled','LeeSin','Lillia','Lissandra','Malphite','Malzahar','Maokai','Master Yi','Mordekaiser','Morgana','Naafiri','Nasus','Neeko','Nidalee','Nocturne','Olaf','Ornn','Pantheon','Poppy','Qiyana','Quinn','Rammus','Rek\'Sai','Renekton','Rengar','Riven','Rumble','Ryze','Sejuani','Senna','Sett','Shaco','Shen','Shyvana','Singed','Sion','Skarner','Smolder','Swain','Sylas','Syndra','Tahm Kench','Talon','Teemo','Trundle','Tryndamere','Twisted Fate','Udyr','Urgot','Varus','Vayne','Veigar','Vi','Viego','Viktor','Vladimir','Volibear','Warwick','Wukong','Xin Zhao','Yasuo','Yone','Yorick','Zaahen','Zac','Zed'],
-  JUNGLE:  ['Aatrox','Ambessa','Amumu','Bel\'Veth','Brand','Briar','Camille','Cho\'Gath','Darius','Diana','Dr.Mundo','Ekko','Elise','Evelynn','Fiddlesticks','Fizz','Gragas','Graves','Gwen','Hecarim','Ivern','Jarvan IV','Jax','Jayce','Karthus','Kayn','Kha\'Zix','Kindred','LeeSin','Lillia','Malphite','Maokai','Master Yi','Mordekaiser','Morgana','Naafiri','Nasus','Neeko','Nidalee','Nocturne','Nunu','Olaf','Pantheon','Poppy','Qiyana','Rammus','Rek\'Sai','Rengar','Rumble','Sejuani','Shaco','Shen','Shyvana','Sion','Skarner','Sylas','Taliyah','Talon','Teemo','Trundle','Tryndamere','Twitch','Udyr','Vayne','Vi','Viego','Volibear','Warwick','Wukong','Xin Zhao','Yorick','Zaahen','Zac','Zed','Zeri','Zyra'],
-  MID:     ['Aatrox','Ahri','Akali','Akshan','Ambessa','Anivia','Annie','Aurelion Sol','Aurora','Azir','Brand','Briar','Camille','Cassiopeia','Cho\'Gath','Corki','Diana','Dr.Mundo','Draven','Ekko','Elise','Ezreal','Fiddlesticks','Fizz','Galio','Gangplank','Garen','Gragas','Gwen','Heimerdinger','Hwei','Irelia','Ivern','Jayce','Kai\'Sa','Karma','Karthus','Kassadin','Katarina','Kayle','Kennen','Kindred','Kled','Kog\'Maw','Leblanc','Lissandra','Lucian','Lux','Malphite','Malzahar','Mel','Mordekaiser','Morgana','Naafiri','Nasus','Neeko','Nidalee','Nocturne','Nunu','Olaf','Orianna','Ornn','Pantheon','Pyke','Qiyana','Quinn','Rakan','Renekton','Riven','Rumble','Ryze','Sejuani','Sett','Shen','Singed','Sion','Smolder','Swain','Sylas','Syndra','Seraphine','Tahm Kench','Taliyah','Talon','Teemo','Tristana','Tryndamere','Twisted Fate','Twitch','Varus','Vayne','Veigar','Vel\'Koz','Vex','Viego','Viktor','Vladimir','Xerath','Xin Zhao','Yasuo','Yone','Yorick','Zaahen','Zac','Zed','Zeri','Ziggs','Zilean','Zoe','Zyra','Wukong'],
-  ADC:     ['Akshan','Anivia','Annie','Aphelios','Ashe','Aurelion Sol','Azir','Brand','Caitlyn','Cassiopeia','Cho\'Gath','Corki','Draven','Ezreal','Heimerdinger','Hwei','Jhin','Jinx','Kai\'Sa','Kalista','Karthus','Katarina','Kindred','Kog\'Maw','Lucian','Lux','Malzahar','Mel','Miss Fortune','Nilah','Quinn','Rengar','Samira','Senna','Sion','Sivir','Smolder','Swain','Syndra','Seraphine','Tahm Kench','Taliyah','Tristana','Twisted Fate','Twitch','Varus','Vayne','Veigar','Vel\'Koz','Viktor','Vladimir','Xayah','Xerath','Yasuo','Yunara','Zeri','Ziggs','Zyra'],
-  SUPPORT: ['Alistar','Amumu','Anivia','Annie','Ashe','Bard','Blitzcrank','Brand','Braum','Camille','Cho\'Gath','Elise','Fiddlesticks','Galio','Gragas','Heimerdinger','Hwei','Ivern','Janna','Karma','Leblanc','LeeSin','Leona','Lissandra','Lulu','Lux','Malphite','Maokai','Mel','Milio','Miss Fortune','Morgana','Nami','Nautilus','Neeko','Nidalee','Nunu','Ornn','Pantheon','Poppy','Pyke','Rakan','Rammus','Rell','Renata','Sejuani','Senna','Sett','Shaco','Shen','Sion','Skarner','Sona','Soraka','Swain','Sylas','Seraphine','Tahm Kench','Taliyah','Taric','Teemo','Thresh','Trundle','Twitch','Veigar','Vel\'Koz','Vex','Xerath','Yuumi','Zac','Ziggs','Zilean','Zoe','Zyra'],
-};
+const DEFAULT_CHAMPIONS = window.DEFAULT_CHAMPIONS;
 
 function loadChampionsFromStorage() {
   try {
