@@ -1424,7 +1424,7 @@ function spinRole() {
   roleSpinning = true;
   document.getElementById('spinRoleBtn').disabled = true;
 
-  spin('role', 4000 + Math.random() * 2000, (finalAngle) => {
+  spin('role', 2000 + Math.random() * 1000, (finalAngle) => {
     const idx = getWinnerIndex(finalAngle, activeRoles.length);
     const result = activeRoles[idx].name;
     roleSpinning = false;
