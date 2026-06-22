@@ -712,7 +712,7 @@ function spinChamp(){
   champSpinning=true;
   document.getElementById('spinChampBtn').disabled=true;
 
-  spin('champ', 4500+Math.random()*2000, (fa)=>{
+  spin('champ', 2500+Math.random()*2000, (fa)=>{
     const idx=getWinnerIndex(fa,list.length);
     const winner=list[idx];
     champSpinning=false;
